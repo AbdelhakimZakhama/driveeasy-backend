@@ -1,5 +1,6 @@
 package tn.sesame.driveeasy.location.exception;
 
+import feign.FeignException;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,6 +33,16 @@ public class GlobalExceptionHandler {
             MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorResponse> badRequest(Exception e) {
         return build(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    // Error coming from vehicule-service / client-service (or service unreachable)
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorResponse> downstream(FeignException e) {
+        int s = e.status();
+        if (s == 404 || s == 409 || s == 400) {
+            return build(HttpStatus.valueOf(s), "Downstream service answered " + s + ": " + e.contentUTF8());
+        }
+        return build(HttpStatus.SERVICE_UNAVAILABLE, "A required service is unavailable, try again later");
     }
 
     @ExceptionHandler(Exception.class)
