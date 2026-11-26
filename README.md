@@ -114,10 +114,6 @@ curl -s localhost:8080/api/locations/1
 
 Every gateway response carries an `X-Response-Time-Ms` header (custom global filter).
 
-## Screenshots
-
-(add: Eureka dashboard, curl/Postman results, Zipkin trace and dependency graph)
-
 ## Limitations
 
 - In-memory data, no persistence
